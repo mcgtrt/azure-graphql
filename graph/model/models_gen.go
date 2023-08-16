@@ -9,7 +9,7 @@ type CreateEmployeeParams struct {
 	Email        string `json:"Email"`
 	Password     string `json:"Password"`
 	Dob          string `json:"DOB"`
-	DepartmentID int    `json:"DepartmentID"`
+	DepartmentID string `json:"DepartmentID"`
 	Position     string `json:"Position"`
 }
 
@@ -35,10 +35,11 @@ type Response struct {
 }
 
 type UpdateEmployeeParams struct {
-	FirstName    string `json:"FirstName"`
-	LastName     string `json:"LastName"`
-	Username     string `json:"Username"`
-	Dob          string `json:"DOB"`
-	DepartmentID int    `json:"DepartmentID"`
-	Position     string `json:"Position"`
+	EmployeeID   string  `json:"EmployeeID"`
+	FirstName    *string `json:"FirstName,omitempty"`
+	LastName     *string `json:"LastName,omitempty"`
+	Username     *string `json:"Username,omitempty"`
+	Dob          *string `json:"DOB,omitempty"`
+	DepartmentID *string `json:"DepartmentID,omitempty"`
+	Position     *string `json:"Position,omitempty"`
 }

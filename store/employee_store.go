@@ -109,7 +109,6 @@ func (s *AzureEmployeeStore) GetEmployees(ctx context.Context) ([]*model.Employe
 			&e.Username,
 			&e.Email,
 			&e.Dob,
-			// DOES THIS REQUIRE AN INT? NOW IT'S A STRING
 			&e.DepartmentID,
 			&e.Position,
 		); err != nil {
@@ -172,11 +171,48 @@ func (s *AzureEmployeeStore) InsertEmployee(ctx context.Context, params *model.C
 }
 
 func (s *AzureEmployeeStore) UpdateEmployee(ctx context.Context, params *model.UpdateEmployeeParams) (*model.Response, error) {
-	return nil, nil
+	if err := util.ValidateUpdateEmploteeParams(params); err != nil {
+		return nil, err
+	}
+	if err := s.db.PingContext(ctx); err != nil {
+		return nil, err
+	}
+
+	var (
+		query = util.MakeQueryFromUpdateParams(params)
+		tsql  = fmt.Sprintf("UPDATE AzureQl.Employee SET %s WHERE EmployeeID ='%s'", query, params.EmployeeID)
+	)
+
+	_, err := s.db.ExecContext(ctx, tsql)
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.Response{
+		Status: http.StatusOK,
+		Msg:    "updated",
+	}, nil
 }
 
 func (s *AzureEmployeeStore) DeleteEmployee(ctx context.Context, id string) (*model.Response, error) {
 	return nil, nil
+	// ctx := context.Background()
+
+	// // Check if database is alive.
+	// err := db.PingContext(ctx)
+	// if err != nil {
+	//     return -1, err
+	// }
+
+	// tsql := fmt.Sprintf("DELETE FROM TestSchema.Employees WHERE Name = @Name;")
+
+	// // Execute non-query with named parameters
+	// result, err := db.ExecContext(ctx, tsql, sql.Named("Name", name))
+	// if err != nil {
+	//     return -1, err
+	// }
+
+	// return result.RowsAffected()
 }
 
 func init() {

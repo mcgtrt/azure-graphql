@@ -32,19 +32,20 @@ input CreateEmployeeParams {
   Email: String!
   Password: String!
   DOB: String!
-  DepartmentID: Int!
+  DepartmentID: ID!
   Position: String!
 }
 
 # Excluded email and password as they should be handled
 # in a separate request with a dedicated model - TODO
 input UpdateEmployeeParams {
-  FirstName: String!
-  LastName: String!
-  Username: String!
-  DOB: String!
-  DepartmentID: Int!
-  Position: String!
+  EmployeeID: ID!
+  FirstName: String
+  LastName: String
+  Username: String
+  DOB: String
+  DepartmentID: ID
+  Position: String
 }
 
 type Response {

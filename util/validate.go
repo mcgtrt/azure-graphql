@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/mcgtrt/azure-graphql/graph/model"
 )
@@ -46,11 +47,59 @@ func ValidateCreateEmployeeParams(params *model.CreateEmployeeParams) error {
 		// TODO: Add time format validation
 		return fmt.Errorf("date of birth should have a format: 1999/09/29")
 	}
-	if params.DepartmentID < 1 {
+	id, err := strconv.Atoi(params.DepartmentID)
+	if err != nil {
+		return fmt.Errorf("invalid department id")
+	}
+	if id < 1 {
 		return fmt.Errorf("department id must be bigger than 0")
 	}
 	if len(params.Position) < minPositionLen || len(params.Position) > maxPositionLen {
 		return fmt.Errorf("position should have between %d and %d characters", minPositionLen, maxPositionLen)
+	}
+
+	return nil
+}
+
+// TODO: Same map[string]string error handling as for ValidateCreateEmployeeParams
+func ValidateUpdateEmploteeParams(params *model.UpdateEmployeeParams) error {
+	if len(params.EmployeeID) == 0 {
+		return fmt.Errorf("invalid employee id")
+	}
+	if params.FirstName != nil {
+		if len(*params.FirstName) < minFirstNameLen || len(*params.FirstName) > maxFirstNameLen {
+			return fmt.Errorf("first name should have between %d and %d characters", minFirstNameLen, maxFirstNameLen)
+		}
+	}
+	if params.LastName != nil {
+		if len(*params.LastName) < minLastNameLen || len(*params.LastName) > maxLastNameLen {
+			return fmt.Errorf("last name should have between %d and %d characters", minLastNameLen, maxLastNameLen)
+		}
+	}
+	if params.Username != nil {
+		if len(*params.Username) < minUsernameLen || len(*params.Username) > maxUsernameLen {
+			return fmt.Errorf("username should have between %d and %d characters", minUsernameLen, maxUsernameLen)
+		}
+	}
+	if params.Dob != nil {
+		if len(*params.Dob) != DOBLen {
+			// TODO: Add time format validation
+			return fmt.Errorf("date of birth should have a format: 1999/09/29")
+		}
+	}
+	if params.DepartmentID != nil {
+		id, err := strconv.Atoi(*params.DepartmentID)
+		if err != nil {
+			return fmt.Errorf("invalid department id")
+		}
+		if id < 1 {
+			return fmt.Errorf("department id must be bigger than 0")
+		}
+	}
+	if params.Position != nil {
+		if len(*params.Position) < minPositionLen || len(*params.Position) > maxPositionLen {
+			return fmt.Errorf("position should have between %d and %d characters", minPositionLen, maxPositionLen)
+		}
 	}
 
 	return nil
