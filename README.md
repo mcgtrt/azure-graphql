@@ -9,11 +9,7 @@ Azure SQL Server with GraphQL & Docker
 docker-compose up -d
 ```
 
-2. Store has default values to connect to the database.
-
-If you'd like to add change the configuration, create .env file in the root directory
-
-and modify fields below to adjust your config.
+2. Environment variables (adjust to your local config)
 ```
 AZURE_SERVER_URL=localhost
 AZURE_SERVER_PORT=1433
@@ -22,6 +18,39 @@ AZURE_PASSWORD=yourPassword
 AZURE_DBNAME=master
 
 HTTP_LISTEN_ADDR=3000
+JWT_SECRET=superstrongpassword
 ```
 
-Empty or not provided fields will be replaced by the default values.
+3. Run command to your server to create schema, tables & initial employee you can use for auth testing.
+
+If you don't have sqlcmd, you can install with brew (on Mac):
+```
+brew install sqlcmd
+```
+
+Then run (change port, username and password to adjust your settings, below default)
+```
+sqlcmd -S localhost:1433 -U sa -P 'superStrong(!)Password' -d master -i ./CreateSchema.sql
+```
+
+4. Run server
+```
+make run
+```
+
+## Endpoints
+
+- "/employee" - CRUD operations for Employees, secured with JWT authentication
+
+- "/login" - authenticate with email and password. If you executed step 3. properly, you can now make a POST request
+```
+{
+    "email": "test@go.com",
+    "password": "superstrongpassword"
+}
+```
+to get the token from initial employee account.
+
+- "/" - GraphQL playground. You can find handy queries for testing in "/playground.graphql" file.
+
+# Enjoy!

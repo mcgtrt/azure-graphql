@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	github.com/99designs/gqlgen v0.17.36
+	github.com/golang-jwt/jwt/v5 v5.0.0
 	github.com/joho/godotenv v1.5.1
 	github.com/microsoft/go-mssqldb v1.5.0
 	github.com/vektah/gqlparser/v2 v2.5.8

@@ -26,7 +26,7 @@ INSERT INTO AzureQl.Department (Name) VALUES
     ('Dep 3');
 
 INSERT INTO AzureQl.Employee (FirstName, LastName, Username, EncryptedPassword, Email, DOB, DepartmentID, Position) VALUES
-    ('Test', 'Surname', 'superuser123', 'superencryptedpwd', 'test@username.com', '2023/08/16', 1, 'Tester');
+    ('Name', 'Surname', 'superuser123', 'superstrongpassword', 'test@go.com', '2023/08/16', 1, 'Tester');
 
 SELECT * FROM AzureQl.Department;
 GO

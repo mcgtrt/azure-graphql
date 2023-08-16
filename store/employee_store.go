@@ -9,6 +9,7 @@ import (
 
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/mcgtrt/azure-graphql/graph/model"
+	"github.com/mcgtrt/azure-graphql/types"
 	"github.com/mcgtrt/azure-graphql/util"
 	_ "github.com/microsoft/go-mssqldb"
 	"golang.org/x/crypto/bcrypt"
@@ -28,6 +29,7 @@ var (
 
 type EmployeeStorer interface {
 	GetEmployeeByID(context.Context, string) (*model.Employee, error)
+	GetEmployeeByEmail(context.Context, string) (*types.AuthEmployee, error)
 	GetEmployees(context.Context, *int, *int, *string) ([]*model.Employee, error)
 	InsertEmployee(context.Context, *model.CreateEmployeeParams) (*model.Response, error)
 	UpdateEmployee(context.Context, *model.UpdateEmployeeParams) (*model.Response, error)
@@ -84,6 +86,31 @@ func (s *AzureEmployeeStore) GetEmployeeByID(ctx context.Context, id string) (*m
 			&e.Dob,
 			&e.DepartmentID,
 			&e.Position,
+		); err != nil {
+			return nil, err
+		}
+	}
+	return e, nil
+}
+
+func (s *AzureEmployeeStore) GetEmployeeByEmail(ctx context.Context, email string) (*types.AuthEmployee, error) {
+	if err := s.db.PingContext(ctx); err != nil {
+		return nil, err
+	}
+
+	tsql := fmt.Sprintf("SELECT EmployeeID, Email, EncryptedPassword FROM AzureQl.Employee WHERE Email = '%s';", email)
+	rows, err := s.db.QueryContext(ctx, tsql)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	e := &types.AuthEmployee{}
+	for rows.Next() {
+		if err := rows.Scan(
+			&e.ID,
+			&e.Email,
+			&e.EncryptedPassword,
 		); err != nil {
 			return nil, err
 		}
