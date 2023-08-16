@@ -6,34 +6,33 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/mcgtrt/azure-graphql/graph/model"
 )
 
 // CreateEmployee is the resolver for the createEmployee field.
 func (r *mutationResolver) CreateEmployee(ctx context.Context, params model.CreateEmployeeParams) (*model.Response, error) {
-	panic(fmt.Errorf("not implemented: CreateEmployee - createEmployee"))
+	return r.Resolver.store.InsertEmployee(ctx, &params)
 }
 
 // UpdateEmployee is the resolver for the updateEmployee field.
 func (r *mutationResolver) UpdateEmployee(ctx context.Context, params model.UpdateEmployeeParams) (*model.Response, error) {
-	panic(fmt.Errorf("not implemented: UpdateEmployee - updateEmployee"))
+	return r.Resolver.store.UpdateEmployee(ctx, &params)
 }
 
 // DeleteEmployee is the resolver for the deleteEmployee field.
 func (r *mutationResolver) DeleteEmployee(ctx context.Context, id string) (*model.Response, error) {
-	panic(fmt.Errorf("not implemented: DeleteEmployee - deleteEmployee"))
+	return r.Resolver.store.DeleteEmployee(ctx, id)
 }
 
 // Employee is the resolver for the employee field.
 func (r *queryResolver) Employee(ctx context.Context, id string) (*model.Employee, error) {
-	panic(fmt.Errorf("not implemented: Employee - employee"))
+	return r.Resolver.store.GetEmployeeByID(ctx, id)
 }
 
 // Employees is the resolver for the employees field.
 func (r *queryResolver) Employees(ctx context.Context) ([]*model.Employee, error) {
-	panic(fmt.Errorf("not implemented: Employees - employees"))
+	return r.Resolver.store.GetEmployees(ctx)
 }
 
 // Mutation returns MutationResolver implementation.
