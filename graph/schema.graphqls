@@ -1,0 +1,48 @@
+type Query {
+  employee(id: String!): Employee!
+  employees: [Employee!]!
+}
+
+type Mutation {
+  createEmployee(params: CreateEmployeeParams!): String!
+  updateEmployee(params: UpdateEmployeeParams!): String!
+  deleteEmployee(id: ID!): String!
+}
+
+type Employee {
+  EmployeeID: ID!
+  FirstName: String!
+  LastName: String!
+  Username: String!
+  Email: String!
+  DOB: String!
+  Department: Department!
+  Position: String!
+}
+
+type Department {
+  DepartmentID: ID!
+  Name: String!
+}
+
+input CreateEmployeeParams {
+  FirstName: String!
+  LastName: String!
+  Username: String!
+  Email: String!
+  Password: String!
+  DOB: String!
+  DepartmentID: Int!
+  Position: String!
+}
+
+# Excluded email and password as these should be handled
+# in a separate request with dedicated model
+input UpdateEmployeeParams {
+  FirstName: String!
+  LastName: String!
+  Username: String!
+  DOB: String!
+  DepartmentID: Int!
+  Position: String!
+}
