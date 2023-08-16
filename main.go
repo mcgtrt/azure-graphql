@@ -10,7 +10,7 @@ import (
 	"github.com/mcgtrt/azure-graphql/graph"
 )
 
-var httpListenAddr = ":3000"
+var httpListenAddr = "3000"
 
 func main() {
 	resolver, err := graph.NewResolver()

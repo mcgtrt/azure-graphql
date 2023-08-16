@@ -20,6 +20,17 @@ CREATE TABLE AzureQl.Employee(
 );
 GO
 
+INSERT INTO AzureQl.Department (Name) VALUES 
+    ('Dep 1'),
+    ('Dep 2'),
+    ('Dep 3');
+
+INSERT INTO AzureQl.Employee (FirstName, LastName, Username, EncryptedPassword, Email, DOB, DepartmentID, Position) VALUES
+    ('Test', 'Surname', 'superuser123', 'superencryptedpwd', 'test@username.com', '2023/08/16', 1, 'Tester');
+
+SELECT * FROM AzureQl.Department;
+GO
+
 SELECT * FROM AzureQl.Employee;
 GO
 

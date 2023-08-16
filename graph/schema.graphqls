@@ -36,8 +36,8 @@ input CreateEmployeeParams {
   Position: String!
 }
 
-# Excluded email and password as these should be handled
-# in a separate request with dedicated model
+# Excluded email and password as they should be handled
+# in a separate request with a dedicated model - TODO
 input UpdateEmployeeParams {
   FirstName: String!
   LastName: String!

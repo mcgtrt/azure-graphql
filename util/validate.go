@@ -24,7 +24,7 @@ const (
 
 // TODO: Instead of validating one field by one, this could return a map[string]string
 // with detailed key - value pair with description and a key field
-func VerifyCreateEmployeeParams(params model.CreateEmployeeParams) error {
+func ValidateCreateEmployeeParams(params *model.CreateEmployeeParams) error {
 	if len(params.FirstName) < minFirstNameLen || len(params.FirstName) > maxFirstNameLen {
 		return fmt.Errorf("first name should have between %d and %d characters", minFirstNameLen, maxFirstNameLen)
 	}
@@ -35,14 +35,16 @@ func VerifyCreateEmployeeParams(params model.CreateEmployeeParams) error {
 		return fmt.Errorf("username should have between %d and %d characters", minUsernameLen, maxUsernameLen)
 	}
 	if len(params.Email) < minEmailLen || len(params.Email) > maxEmailLen {
+		// TODO: Add regex expresion to check if email valid
 		return fmt.Errorf("email should have between %d and %d characters", minEmailLen, maxEmailLen)
 	}
 	if len(params.Password) < minPasswordLen || len(params.Password) > maxPasswordLen {
+		// TODO: Add password validator for uppercase, number, special char etc.
 		return fmt.Errorf("password should have between %d and %d characters", minPasswordLen, maxPasswordLen)
 	}
 	if len(params.Dob) != DOBLen {
 		// TODO: Add time format validation
-		return fmt.Errorf("Date of birth should have a format: 1999/09/29")
+		return fmt.Errorf("date of birth should have a format: 1999/09/29")
 	}
 	if params.DepartmentID < 1 {
 		return fmt.Errorf("department id must be bigger than 0")

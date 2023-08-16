@@ -4,12 +4,17 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"net/http"
 	"os"
 
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/mcgtrt/azure-graphql/graph/model"
+	"github.com/mcgtrt/azure-graphql/util"
 	_ "github.com/microsoft/go-mssqldb"
+	"golang.org/x/crypto/bcrypt"
 )
+
+const pwCost = 12
 
 // These are the standard connection strings. If you provide the .env
 // file, they will be automatically changed from the init() function
@@ -52,23 +57,69 @@ func NewAzureEmployeeStore() (EmployeeStorer, error) {
 	}, nil
 }
 
-func (s *AzureEmployeeStore) GetEmployeeByID(context.Context, string) (*model.Employee, error) {
+func (s *AzureEmployeeStore) GetEmployeeByID(ctx context.Context, id string) (*model.Employee, error) {
 	return nil, nil
 }
 
-func (s *AzureEmployeeStore) GetEmployees(context.Context) ([]*model.Employee, error) {
+func (s *AzureEmployeeStore) GetEmployees(ctx context.Context) ([]*model.Employee, error) {
 	return nil, nil
 }
 
-func (s *AzureEmployeeStore) InsertEmployee(context.Context, *model.CreateEmployeeParams) (*model.Response, error) {
+func (s *AzureEmployeeStore) InsertEmployee(ctx context.Context, params *model.CreateEmployeeParams) (*model.Response, error) {
+	if err := util.ValidateCreateEmployeeParams(params); err != nil {
+		return nil, err
+	}
+	if err := s.db.PingContext(ctx); err != nil {
+		return nil, err
+	}
+
+	tsql := `
+		INSERT INTO AzureQl.Employee (FirstName, LastName, Username, EncryptedPassword, Email, DOB, DepartmentID, Position) 
+		VALUES (@FirstName, @LastName, @Username, @EncryptedPassword, @Email, @DOB, @DepartmentID, @Position);
+		select isNull(SCOPE_IDENTITY(), -1);
+	`
+
+	state, err := s.db.Prepare(tsql)
+	if err != nil {
+		return nil, err
+	}
+	defer state.Close()
+
+	encpw, err := bcrypt.GenerateFromPassword([]byte(params.Password), pwCost)
+	if err != nil {
+		return nil, err
+	}
+
+	var (
+		row = state.QueryRowContext(
+			ctx,
+			sql.Named("FirstName", params.FirstName),
+			sql.Named("LastName", params.LastName),
+			sql.Named("Username", params.Username),
+			sql.Named("EncryptedPassword", string(encpw)),
+			sql.Named("Email", params.Email),
+			sql.Named("DOB", params.Dob),
+			sql.Named("DepartmentID", params.DepartmentID),
+			sql.Named("Position", params.Position),
+		)
+		newID int64
+	)
+
+	if err := row.Scan(&newID); err != nil {
+		return nil, err
+	}
+
+	return &model.Response{
+		Status: http.StatusOK,
+		Msg:    fmt.Sprintf("%d", newID),
+	}, nil
+}
+
+func (s *AzureEmployeeStore) UpdateEmployee(ctx context.Context, params *model.UpdateEmployeeParams) (*model.Response, error) {
 	return nil, nil
 }
 
-func (s *AzureEmployeeStore) UpdateEmployee(context.Context, *model.UpdateEmployeeParams) (*model.Response, error) {
-	return nil, nil
-}
-
-func (s *AzureEmployeeStore) DeleteEmployee(context.Context, string) (*model.Response, error) {
+func (s *AzureEmployeeStore) DeleteEmployee(ctx context.Context, id string) (*model.Response, error) {
 	return nil, nil
 }
 
