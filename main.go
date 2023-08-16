@@ -10,19 +10,25 @@ import (
 	"github.com/mcgtrt/azure-graphql/graph"
 )
 
-const defaultPort = "8080"
+var httpListenAddr = ":3000"
 
 func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = defaultPort
+	resolver, err := graph.NewResolver()
+	if err != nil {
+		panic(err)
 	}
+	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: resolver}))
 
-	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
+	// Comment out to turn off the playground
+	http.Handle("/", playground.Handler("GraphQL playground", "/employee"))
+	http.Handle("/employee", srv)
 
-	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	http.Handle("/query", srv)
+	log.Printf("Starting HTTP server at port: %s", httpListenAddr)
+	log.Fatal(http.ListenAndServe(":"+httpListenAddr, nil))
+}
 
-	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+func init() {
+	if port := os.Getenv("HTTP_LISTEN_ADDR"); port != "" {
+		httpListenAddr = port
+	}
 }
