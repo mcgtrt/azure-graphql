@@ -29,6 +29,11 @@ type Employee struct {
 	Position   string      `json:"Position"`
 }
 
+type Response struct {
+	Status int    `json:"Status"`
+	Msg    string `json:"Msg"`
+}
+
 type UpdateEmployeeParams struct {
 	FirstName    string `json:"FirstName"`
 	LastName     string `json:"LastName"`

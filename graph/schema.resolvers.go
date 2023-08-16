@@ -12,17 +12,17 @@ import (
 )
 
 // CreateEmployee is the resolver for the createEmployee field.
-func (r *mutationResolver) CreateEmployee(ctx context.Context, params model.CreateEmployeeParams) (string, error) {
+func (r *mutationResolver) CreateEmployee(ctx context.Context, params model.CreateEmployeeParams) (*model.Response, error) {
 	panic(fmt.Errorf("not implemented: CreateEmployee - createEmployee"))
 }
 
 // UpdateEmployee is the resolver for the updateEmployee field.
-func (r *mutationResolver) UpdateEmployee(ctx context.Context, params model.UpdateEmployeeParams) (string, error) {
+func (r *mutationResolver) UpdateEmployee(ctx context.Context, params model.UpdateEmployeeParams) (*model.Response, error) {
 	panic(fmt.Errorf("not implemented: UpdateEmployee - updateEmployee"))
 }
 
 // DeleteEmployee is the resolver for the deleteEmployee field.
-func (r *mutationResolver) DeleteEmployee(ctx context.Context, id string) (string, error) {
+func (r *mutationResolver) DeleteEmployee(ctx context.Context, id string) (*model.Response, error) {
 	panic(fmt.Errorf("not implemented: DeleteEmployee - deleteEmployee"))
 }
 

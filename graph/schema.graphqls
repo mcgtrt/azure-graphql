@@ -4,9 +4,9 @@ type Query {
 }
 
 type Mutation {
-  createEmployee(params: CreateEmployeeParams!): String!
-  updateEmployee(params: UpdateEmployeeParams!): String!
-  deleteEmployee(id: ID!): String!
+  createEmployee(params: CreateEmployeeParams!): Response!
+  updateEmployee(params: UpdateEmployeeParams!): Response!
+  deleteEmployee(id: ID!): Response!
 }
 
 type Employee {
@@ -45,4 +45,9 @@ input UpdateEmployeeParams {
   DOB: String!
   DepartmentID: Int!
   Position: String!
+}
+
+type Response {
+  Status: Int!
+  Msg: String!
 }
