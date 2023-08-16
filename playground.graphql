@@ -18,6 +18,19 @@ query getAll {
   }
 }
 
+query getAllPaginated{
+  employees(limit: 2, page: 1, sortBy: "FirstName") {
+    EmployeeID
+    FirstName
+    LastName
+    Username
+    Email
+    DOB
+    DepartmentID
+    Position
+  }
+}
+
 mutation create {
   createEmployee(params: {
     FirstName: "Test",
