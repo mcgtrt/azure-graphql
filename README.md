@@ -9,12 +9,14 @@ Azure SQL Server with GraphQL & Docker
 docker-compose up -d
 ```
 
-2. Environment variables (adjust to your local config)
+2. Environment variables (adjust to your local config).
+
+If not provided, will use default (as per docker-compose setup).
 ```
 AZURE_SERVER_URL=localhost
 AZURE_SERVER_PORT=1433
-AZURE_USERNAME=username
-AZURE_PASSWORD=yourPassword
+AZURE_USERNAME=sa
+AZURE_PASSWORD=superStrong(!)Password
 AZURE_DBNAME=master
 
 HTTP_LISTEN_ADDR=3000
