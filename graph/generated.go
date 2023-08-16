@@ -51,14 +51,14 @@ type ComplexityRoot struct {
 	}
 
 	Employee struct {
-		Department func(childComplexity int) int
-		Dob        func(childComplexity int) int
-		Email      func(childComplexity int) int
-		EmployeeID func(childComplexity int) int
-		FirstName  func(childComplexity int) int
-		LastName   func(childComplexity int) int
-		Position   func(childComplexity int) int
-		Username   func(childComplexity int) int
+		DepartmentID func(childComplexity int) int
+		Dob          func(childComplexity int) int
+		Email        func(childComplexity int) int
+		EmployeeID   func(childComplexity int) int
+		FirstName    func(childComplexity int) int
+		LastName     func(childComplexity int) int
+		Position     func(childComplexity int) int
+		Username     func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -117,12 +117,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Department.Name(childComplexity), true
 
-	case "Employee.Department":
-		if e.complexity.Employee.Department == nil {
+	case "Employee.DepartmentID":
+		if e.complexity.Employee.DepartmentID == nil {
 			break
 		}
 
-		return e.complexity.Employee.Department(childComplexity), true
+		return e.complexity.Employee.DepartmentID(childComplexity), true
 
 	case "Employee.DOB":
 		if e.complexity.Employee.Dob == nil {
@@ -833,8 +833,8 @@ func (ec *executionContext) fieldContext_Employee_DOB(ctx context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _Employee_Department(ctx context.Context, field graphql.CollectedField, obj *model.Employee) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Employee_Department(ctx, field)
+func (ec *executionContext) _Employee_DepartmentID(ctx context.Context, field graphql.CollectedField, obj *model.Employee) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Employee_DepartmentID(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -847,7 +847,7 @@ func (ec *executionContext) _Employee_Department(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Department, nil
+		return obj.DepartmentID, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -859,25 +859,19 @@ func (ec *executionContext) _Employee_Department(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Department)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNDepartment2ᚖgithubᚗcomᚋmcgtrtᚋazureᚑgraphqlᚋgraphᚋmodelᚐDepartment(ctx, field.Selections, res)
+	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Employee_Department(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Employee_DepartmentID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Employee",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "DepartmentID":
-				return ec.fieldContext_Department_DepartmentID(ctx, field)
-			case "Name":
-				return ec.fieldContext_Department_Name(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Department", field.Name)
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -1161,8 +1155,8 @@ func (ec *executionContext) fieldContext_Query_employee(ctx context.Context, fie
 				return ec.fieldContext_Employee_Email(ctx, field)
 			case "DOB":
 				return ec.fieldContext_Employee_DOB(ctx, field)
-			case "Department":
-				return ec.fieldContext_Employee_Department(ctx, field)
+			case "DepartmentID":
+				return ec.fieldContext_Employee_DepartmentID(ctx, field)
 			case "Position":
 				return ec.fieldContext_Employee_Position(ctx, field)
 			}
@@ -1234,8 +1228,8 @@ func (ec *executionContext) fieldContext_Query_employees(ctx context.Context, fi
 				return ec.fieldContext_Employee_Email(ctx, field)
 			case "DOB":
 				return ec.fieldContext_Employee_DOB(ctx, field)
-			case "Department":
-				return ec.fieldContext_Employee_Department(ctx, field)
+			case "DepartmentID":
+				return ec.fieldContext_Employee_DepartmentID(ctx, field)
 			case "Position":
 				return ec.fieldContext_Employee_Position(ctx, field)
 			}
@@ -3494,8 +3488,8 @@ func (ec *executionContext) _Employee(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "Department":
-			out.Values[i] = ec._Employee_Department(ctx, field, obj)
+		case "DepartmentID":
+			out.Values[i] = ec._Employee_DepartmentID(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -4072,16 +4066,6 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 func (ec *executionContext) unmarshalNCreateEmployeeParams2githubᚗcomᚋmcgtrtᚋazureᚑgraphqlᚋgraphᚋmodelᚐCreateEmployeeParams(ctx context.Context, v interface{}) (model.CreateEmployeeParams, error) {
 	res, err := ec.unmarshalInputCreateEmployeeParams(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNDepartment2ᚖgithubᚗcomᚋmcgtrtᚋazureᚑgraphqlᚋgraphᚋmodelᚐDepartment(ctx context.Context, sel ast.SelectionSet, v *model.Department) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._Department(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNEmployee2githubᚗcomᚋmcgtrtᚋazureᚑgraphqlᚋgraphᚋmodelᚐEmployee(ctx context.Context, sel ast.SelectionSet, v model.Employee) graphql.Marshaler {

@@ -16,7 +16,7 @@ type Employee {
   Username: String!
   Email: String!
   DOB: String!
-  Department: Department!
+  DepartmentID: ID!
   Position: String!
 }
 

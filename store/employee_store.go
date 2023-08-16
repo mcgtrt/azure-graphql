@@ -58,11 +58,67 @@ func NewAzureEmployeeStore() (EmployeeStorer, error) {
 }
 
 func (s *AzureEmployeeStore) GetEmployeeByID(ctx context.Context, id string) (*model.Employee, error) {
-	return nil, nil
+	if err := s.db.PingContext(ctx); err != nil {
+		return nil, err
+	}
+
+	tsql := fmt.Sprintf("SELECT EmployeeID, FirstName, LastName, Username, Email, DOB, DepartmentID, Position FROM AzureQl.Employee WHERE EmployeeID = '%s';", id)
+	rows, err := s.db.QueryContext(ctx, tsql)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	e := &model.Employee{}
+	for rows.Next() {
+		if err := rows.Scan(
+			&e.EmployeeID,
+			&e.FirstName,
+			&e.LastName,
+			&e.Username,
+			&e.Email,
+			&e.Dob,
+			&e.DepartmentID,
+			&e.Position,
+		); err != nil {
+			return nil, err
+		}
+	}
+	return e, nil
 }
 
 func (s *AzureEmployeeStore) GetEmployees(ctx context.Context) ([]*model.Employee, error) {
-	return nil, nil
+	if err := s.db.PingContext(ctx); err != nil {
+		return nil, err
+	}
+
+	tsql := "SELECT EmployeeID, FirstName, LastName, Username, Email, DOB, DepartmentID, Position FROM AzureQl.Employee;"
+	rows, err := s.db.QueryContext(ctx, tsql)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var employees []*model.Employee
+	for rows.Next() {
+		e := &model.Employee{}
+		if err := rows.Scan(
+			&e.EmployeeID,
+			&e.FirstName,
+			&e.LastName,
+			&e.Username,
+			&e.Email,
+			&e.Dob,
+			// DOES THIS REQUIRE AN INT? NOW IT'S A STRING
+			&e.DepartmentID,
+			&e.Position,
+		); err != nil {
+			return nil, err
+		}
+		employees = append(employees, e)
+	}
+
+	return employees, nil
 }
 
 func (s *AzureEmployeeStore) InsertEmployee(ctx context.Context, params *model.CreateEmployeeParams) (*model.Response, error) {

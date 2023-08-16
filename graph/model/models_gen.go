@@ -19,14 +19,14 @@ type Department struct {
 }
 
 type Employee struct {
-	EmployeeID string      `json:"EmployeeID"`
-	FirstName  string      `json:"FirstName"`
-	LastName   string      `json:"LastName"`
-	Username   string      `json:"Username"`
-	Email      string      `json:"Email"`
-	Dob        string      `json:"DOB"`
-	Department *Department `json:"Department"`
-	Position   string      `json:"Position"`
+	EmployeeID   string `json:"EmployeeID"`
+	FirstName    string `json:"FirstName"`
+	LastName     string `json:"LastName"`
+	Username     string `json:"Username"`
+	Email        string `json:"Email"`
+	Dob          string `json:"DOB"`
+	DepartmentID string `json:"DepartmentID"`
+	Position     string `json:"Position"`
 }
 
 type Response struct {
