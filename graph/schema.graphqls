@@ -1,6 +1,6 @@
 type Query {
   employee(id: String!): Employee!
-  employees: [Employee!]!
+  employees(limit: Int, page: Int, sortBy: String): [Employee!]!
 }
 
 type Mutation {

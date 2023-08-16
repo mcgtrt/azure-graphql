@@ -104,3 +104,20 @@ func ValidateUpdateEmploteeParams(params *model.UpdateEmployeeParams) error {
 
 	return nil
 }
+
+func ValidateSortBy(sortBy *string) error {
+	err := fmt.Errorf("invalid sort value")
+	switch *sortBy {
+	case "EmployeeID",
+		"FirstName",
+		"LastName",
+		"Username",
+		"Email",
+		"DOB",
+		"DepartmentID",
+		"Position":
+		return nil
+	default:
+		return err
+	}
+}

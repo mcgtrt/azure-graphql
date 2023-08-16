@@ -28,7 +28,7 @@ var (
 
 type EmployeeStorer interface {
 	GetEmployeeByID(context.Context, string) (*model.Employee, error)
-	GetEmployees(context.Context) ([]*model.Employee, error)
+	GetEmployees(context.Context, *int, *int, *string) ([]*model.Employee, error)
 	InsertEmployee(context.Context, *model.CreateEmployeeParams) (*model.Response, error)
 	UpdateEmployee(context.Context, *model.UpdateEmployeeParams) (*model.Response, error)
 	DeleteEmployee(context.Context, string) (*model.Response, error)
@@ -62,7 +62,11 @@ func (s *AzureEmployeeStore) GetEmployeeByID(ctx context.Context, id string) (*m
 		return nil, err
 	}
 
-	tsql := fmt.Sprintf("SELECT EmployeeID, FirstName, LastName, Username, Email, DOB, DepartmentID, Position FROM AzureQl.Employee WHERE EmployeeID = '%s';", id)
+	tsql := fmt.Sprintf(
+		`SELECT EmployeeID, FirstName, LastName, Username, Email, DOB, DepartmentID, Position FROM AzureQl.Employee 
+		WHERE EmployeeID = '%s';`,
+		id,
+	)
 	rows, err := s.db.QueryContext(ctx, tsql)
 	if err != nil {
 		return nil, err
@@ -87,12 +91,40 @@ func (s *AzureEmployeeStore) GetEmployeeByID(ctx context.Context, id string) (*m
 	return e, nil
 }
 
-func (s *AzureEmployeeStore) GetEmployees(ctx context.Context) ([]*model.Employee, error) {
+func (s *AzureEmployeeStore) GetEmployees(ctx context.Context, pLimit *int, pPage *int, sortBy *string) ([]*model.Employee, error) {
 	if err := s.db.PingContext(ctx); err != nil {
 		return nil, err
 	}
 
-	tsql := "SELECT EmployeeID, FirstName, LastName, Username, Email, DOB, DepartmentID, Position FROM AzureQl.Employee;"
+	orderBy := ""
+	if sortBy != nil {
+		if err := util.ValidateSortBy(sortBy); err != nil {
+			return nil, err
+		} else {
+			orderBy = fmt.Sprintf(" ORDER BY %s", *sortBy)
+		}
+	}
+
+	var (
+		limit      = 25
+		page       = 1
+		pagination = ""
+	)
+	if pLimit != nil && *pLimit > 0 {
+		limit = *pLimit
+	}
+	if pPage != nil && *pPage > 0 {
+		page = *pPage
+	}
+	if page > 1 {
+		offset := fmt.Sprintf(" OFFSET %d ROWS", (page-1)*limit)
+		fetch := fmt.Sprintf(" FETCH NEXT %d ROWS ONLY", limit)
+		pagination = offset + fetch
+	}
+
+	tsql := `
+		SELECT EmployeeID, FirstName, LastName, Username, Email, DOB, DepartmentID, Position 
+		FROM AzureQl.Employee` + orderBy + pagination + ";"
 	rows, err := s.db.QueryContext(ctx, tsql)
 	if err != nil {
 		return nil, err

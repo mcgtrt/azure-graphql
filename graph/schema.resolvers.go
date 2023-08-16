@@ -31,8 +31,8 @@ func (r *queryResolver) Employee(ctx context.Context, id string) (*model.Employe
 }
 
 // Employees is the resolver for the employees field.
-func (r *queryResolver) Employees(ctx context.Context) ([]*model.Employee, error) {
-	return r.Resolver.store.GetEmployees(ctx)
+func (r *queryResolver) Employees(ctx context.Context, limit *int, page *int, sortBy *string) ([]*model.Employee, error) {
+	return r.Resolver.store.GetEmployees(ctx, limit, page, sortBy)
 }
 
 // Mutation returns MutationResolver implementation.

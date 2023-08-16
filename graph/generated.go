@@ -69,7 +69,7 @@ type ComplexityRoot struct {
 
 	Query struct {
 		Employee  func(childComplexity int, id string) int
-		Employees func(childComplexity int) int
+		Employees func(childComplexity int, limit *int, page *int, sortBy *string) int
 	}
 
 	Response struct {
@@ -85,7 +85,7 @@ type MutationResolver interface {
 }
 type QueryResolver interface {
 	Employee(ctx context.Context, id string) (*model.Employee, error)
-	Employees(ctx context.Context) ([]*model.Employee, error)
+	Employees(ctx context.Context, limit *int, page *int, sortBy *string) ([]*model.Employee, error)
 }
 
 type executableSchema struct {
@@ -226,7 +226,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		return e.complexity.Query.Employees(childComplexity), true
+		args, err := ec.field_Query_employees_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Employees(childComplexity, args["limit"].(*int), args["page"].(*int), args["sortBy"].(*string)), true
 
 	case "Response.Msg":
 		if e.complexity.Response.Msg == nil {
@@ -440,6 +445,39 @@ func (ec *executionContext) field_Query_employee_args(ctx context.Context, rawAr
 		}
 	}
 	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_employees_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *int
+	if tmp, ok := rawArgs["limit"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+		arg0, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["limit"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["page"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("page"))
+		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["page"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["sortBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sortBy"))
+		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["sortBy"] = arg2
 	return args, nil
 }
 
@@ -1191,7 +1229,7 @@ func (ec *executionContext) _Query_employees(ctx context.Context, field graphql.
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Employees(rctx)
+		return ec.resolvers.Query().Employees(rctx, fc.Args["limit"].(*int), fc.Args["page"].(*int), fc.Args["sortBy"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1235,6 +1273,17 @@ func (ec *executionContext) fieldContext_Query_employees(ctx context.Context, fi
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Employee", field.Name)
 		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_employees_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
 	}
 	return fc, nil
 }
@@ -4491,6 +4540,22 @@ func (ec *executionContext) marshalOID2ᚖstring(ctx context.Context, sel ast.Se
 		return graphql.Null
 	}
 	res := graphql.MarshalID(*v)
+	return res
+}
+
+func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalInt(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.SelectionSet, v *int) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	res := graphql.MarshalInt(*v)
 	return res
 }
 
