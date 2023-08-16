@@ -195,24 +195,20 @@ func (s *AzureEmployeeStore) UpdateEmployee(ctx context.Context, params *model.U
 }
 
 func (s *AzureEmployeeStore) DeleteEmployee(ctx context.Context, id string) (*model.Response, error) {
-	return nil, nil
-	// ctx := context.Background()
+	if err := s.db.PingContext(ctx); err != nil {
+		return nil, err
+	}
 
-	// // Check if database is alive.
-	// err := db.PingContext(ctx)
-	// if err != nil {
-	//     return -1, err
-	// }
+	tsql := "DELETE FROM AzureQl.Employee WHERE EmployeeID = @EmployeeID"
+	_, err := s.db.ExecContext(ctx, tsql, sql.Named("EmployeeID", id))
+	if err != nil {
+		return nil, err
+	}
 
-	// tsql := fmt.Sprintf("DELETE FROM TestSchema.Employees WHERE Name = @Name;")
-
-	// // Execute non-query with named parameters
-	// result, err := db.ExecContext(ctx, tsql, sql.Named("Name", name))
-	// if err != nil {
-	//     return -1, err
-	// }
-
-	// return result.RowsAffected()
+	return &model.Response{
+		Status: http.StatusOK,
+		Msg:    "deleted",
+	}, nil
 }
 
 func init() {

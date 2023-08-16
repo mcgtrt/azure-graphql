@@ -1,0 +1,54 @@
+query getOne {
+  employee(id: "1") {
+    EmployeeID
+    FirstName
+  }
+}
+
+query getAll {
+  employees {
+    EmployeeID
+    FirstName
+    LastName
+    Username
+    Email
+    DOB
+    DepartmentID
+    Position
+  }
+}
+
+mutation create {
+  createEmployee(params: {
+    FirstName: "Test",
+    LastName: "User",
+    Username: "testuser",
+    Email: "test@user.com",
+    Password: "superstrongpassword",
+    DOB: "2023/08/16",
+    DepartmentID: 1,
+    Position: "Tester"
+  }) {
+    Status,
+    Msg
+  }
+}
+
+mutation update {
+  updateEmployee(params: {
+    EmployeeID: "1"
+    FirstName: "New"
+    LastName: "Test"
+    Position: "Supertester"
+  }) {
+    Status,
+    Msg
+  }
+}
+
+mutation delete {
+  deleteEmployee(id: "1") {
+    Status, 
+    Msg
+  }
+}
